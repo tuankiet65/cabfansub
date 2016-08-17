@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set currPage="tags" %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/objects-list.css">
+{% endblock %}
+{% block content %}
+<div id="index-searchbar">
+    <h1 class="text-center">Tags: {{ tagTitle }}</h1>
+</div>
+<div id="result-container">
+    <div id="result-loading" style="display:block !important;">
+        Loading...
+    </div>
+    <div id="result">
+
+    </div>
+    <button class="btn btn-block btn-primary btn-lg" id="load-more" style="display:none;">
+        Load more results
+    </button>
+</div>
+{% endblock %}
+{% block js %}
+<script src="/static/js/sprintf.js"></script>
+<script src="/static/js/moment.js"></script>
+<script src="/static/js/objects-list.js"></script>
+<script src="/static/js/tags.js"></script>
+<script>
+    tagTitle = decodeURI("{{ tagTitle }}");
+    resultLoad(resultPage);
+</script>
+{% endblock %}

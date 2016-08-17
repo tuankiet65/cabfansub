@@ -1,0 +1,72 @@
+{% set navLeft=[
+    ("index", _("This seasion"), "/", "home"),
+    ("older_seasons", _("Older seasions"), "/seasons", "time"),
+    ("tags", _("Tags"), "/tags", "tag"),
+    ("search", _("Search"), "/search", "search"),
+    ("about", _("About"), "/about", "info-sign")
+] %}
+{% set navRight=[
+    ("login", "Login", "/login", "log-in"),
+    ("register", "Sign up", "/register", "user"),
+] %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %} | Cab Fansub</title>
+    <style>
+        body {
+           padding-top: 50px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/roboto-fontface/css/roboto/roboto-fontface.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/material-design-icons/iconfont/material-icons.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap/dist/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/bootstrap-material-design.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/ripples.min.css') }}" />
+    {% block css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <img alt="Brand" src="{{ url_for('static', filename='logo/logo.png') }}" style="width:23px;display:inline-block;">
+                Cab Fansub
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                {% for navItem in navLeft %}
+                <li class="{% if navItem[0]==currPage %}active{% endif %}">
+                    <a href="{{navItem[2]}}">
+                        <span class="glyphicon glyphicon-{{navItem[3]}}"></span>
+                        {{navItem[1]}}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+    </div>
+</nav>
+{% block content %}{% endblock %}
+<script src="{{ url_for('static', filename='libraries/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/material.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/ripples.min.js') }}"></script>
+<script>
+    $.material.init();
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>

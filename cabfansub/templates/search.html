@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% set currPage="search" %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/objects-list.css">
+{% endblock %}
+{% block content %}
+<div id="index-searchbar">
+    <h1 class="text-center">Try typing something here</h1>
+    <form onsubmit="initiateSearch(); return false;">
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button"
+                        class="btn btn-default dropdown-toggle"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"><span id="search-dropdown-text">{{search_type}}</span> <span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="search-dropdown-options">
+                    <li><a href="#">Clients</a></li>
+                    <li><a href="#">Tags</a></li>
+                    <li><a href="#">Users</a></li>
+                </ul>
+            </div>
+            <input type="text" class="form-control" name="q" id="searchbar"
+                   placeholder="Search for clients, tags and more" value="{{ q }}">
+        </div>
+        <br/>
+        <div class="panel-group" role="tablist" aria-multiselectable="true" id="accordion">
+            <div class="panel panel-info">
+                <div class="panel-heading" role="tab" id="search-tips-heading">
+                    <h2 class="panel-title">
+                        <a role="button"
+                           data-toggle="collapse"
+                           href="#search-tips"
+                           aria-expanded="true"
+                           aria-controls="search-tips"
+                           data-parent="#accordion">
+                            Search tips
+                        </a>
+                        <span class="caret"></span>
+                    </h2>
+                </div>
+                <div class="panel-collapse collapse" role="tabpanel" id="search-tips"
+                     aria-labelledby="search-tips-heading">
+                    <div class="panel-body">
+                        <ul>
+                            <li>+<i>keyword</i>: Only return results that contain <i>keyword</i></li>
+                            <li>-<i>keyword</i>: Only return results that don't contain <i>keyword</i></li>
+                            <li>"<i>keyword</i>": Only return results that contain the exact phrase</li>
+                            <li>tags:<i>keyword</i>: Only return results that has the tag <i>keyword</i></li>
+                            <li>username:<i>keyword</i>: Only return results which its owner is <i>keyword</i></li>
+                            <li><b>Only clients which have sent at lease once will appear here, to prevent spam</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="result-container">
+    <div id="result-loading">
+        Loading...
+    </div>
+    <div id="result">
+
+    </div>
+    <button class="btn btn-block btn-primary btn-lg" id="load-more" style="display:none;">
+        Load more results
+    </button>
+</div>
+{% endblock %}
+{% block js %}
+<script src="/static/js/sprintf.js"></script>
+<script src="/static/js/moment.js"></script>
+<script src="/static/js/objects-list.js"></script>
+<script src="/static/js/search-page.js"></script>
+<script>
+    if ({{init}})
+        initiateSearch();
+
+</script>
+{% endblock %}

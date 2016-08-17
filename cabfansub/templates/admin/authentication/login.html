@@ -1,0 +1,49 @@
+{% extends "admin/authentication/base.html" %}
+{% set currPage="login" %}
+{% block title %}Login{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/animate.css/animate.min.css') }}" />
+    <style>
+        .container-fluid {
+        display:flex;justify-content:center;align-items:center;
+        }
+        .well {
+            max-width: 600px;
+            width: 90%;
+        }
+        body {
+            /* Background source: Pixiv ID 58476233 */
+            background: url("/static/img/login-background.jpg") center fixed no-repeat;
+            background-size: cover;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div id="form" class="well well-lg">
+        <div id="login-form-header">
+            <img src="/static/logo/logo.png"/>
+        </div>
+        <form action="/admin/login" method="post">
+            <div class="form-group">
+                <input placeholder="Your username" name="username" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Your password" class="form-control">
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="remember-me">
+                        Remember me (for up to one month)
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-block btn-primary btn-lg btn-raised">Log in</button>
+            <a href="/forgot" type="button" class="btn btn-block btn-lg btn-info btn-raised">
+                I forgot my password
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

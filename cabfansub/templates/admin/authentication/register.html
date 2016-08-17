@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% set currPage="register" %}
+{% block title %} MakerWeek sign up {% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/forms.css">
+{% endblock %}
+{% block content %}
+<div class="container-fluid" id="container">
+    <div id="registration-form" class="well well-lg">
+        <h1>Registration form</h1>
+        <hr/>
+        <form action="/admin/register" method="post">
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                <input placeholder="Your username" name="username" type="text" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+                <input placeholder="Your email" name="email" type="text" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input type="password" name="password" placeholder="Your password" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input type="password" name="password-repeat" placeholder="Your password (again)" class="form-control">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                <input placeholder="Your real name" name="realname" type="text" class="form-control">
+            </div>
+            You can add your phone number later for notification purpose
+            <button type="submit" class="btn btn-block btn-primary btn-lg">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

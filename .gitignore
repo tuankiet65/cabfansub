@@ -1,0 +1,7 @@
+venv
+.idea
+__pycache__
+/cabfansub/static/libraries
+!/cabfansub/static/libraries/bower.json
+!/cabfansub/static/libraries/.bowerrc
+count

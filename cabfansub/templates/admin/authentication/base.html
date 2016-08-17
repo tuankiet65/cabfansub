@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %} | Cab Fansub Admin Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/roboto-fontface/css/roboto/roboto-fontface.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/material-design-icons/iconfont/material-icons.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap/dist/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/bootstrap-material-design.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/ripples.min.css') }}" />
+    {% block css %}{% endblock %}
+</head>
+<body>
+{% block content %}{% endblock %}
+<script src="{{ url_for('static', filename='libraries/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/material.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/ripples.min.js') }}"></script>
+<script>
+    $.material.init();
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>

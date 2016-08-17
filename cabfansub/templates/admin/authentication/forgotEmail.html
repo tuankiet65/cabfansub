@@ -1,0 +1,14 @@
+{% set link=url_for("authentication.resetPassword2", token=token, _external=True) %}
+<html>
+<head></head>
+<body>
+<p>
+    Someone, hopefully you, has requested to reset your password on MakerWeek.<br/>
+    To reset your password, please click this link:
+    <a href="{{ link }}">
+        {{ link }}
+    </a><br/>
+    This link will expire on {{expiration}}
+</p>
+</body>
+</html>

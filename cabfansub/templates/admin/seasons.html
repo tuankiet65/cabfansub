@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+{% block title %}Seasons{% endblock %}
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='libraries/dropdown.js/jquery.dropdown.css') }}"/>
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='jscss/admin/seasons/seasons.css') }}"/>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="center">Seasons</h1>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Season name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for season in seasons %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><a href="{{ url_for('admin.season_list_anime', id=season.id) }}">{{season.season_name}} {{year}}</a></td>
+                <td>
+                    <button data-season-id="{{ season.id }}" class="btn btn-primary btn-sm">
+                        <i class="material-icons">edit</i>
+                        Edit
+                    </button>
+                    <button data-season-id="{{ season.id }}" class="btn btn-danger btn-sm">
+                        <i class="material-icons">delete</i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <select id="season-name" class="form-control">
+                                <option value="Spring">{{ _("Spring") }}</option>
+                                <option value="Summer">{{ _("Summer") }}</option>
+                                <option value="Autumn">{{ _("Autumn") }}</option>
+                                <option value="Winter">{{ _("Winter") }}</option>
+                            </select>
+                        </div>
+                        <input type="number" id="season-year" class="form-control" value="2016" required="required">
+                        <button id="add-season" class="btn btn-primary btn-raised">{{ _("Add season") }}</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ url_for('static', filename='libraries/dropdown.js/jquery.dropdown.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/handlebars/handlebars.min.js') }}"></script>
+<script>
+    rowID = {{ seasons|length }};
+    i18n = {
+        button_caption: "{{ _("Add season") }}",
+        button_adding: "{{ _('Adding...') }}",
+        add_success: "{{ _('Successfully added a season') }}",
+        add_fail: "{{ _('<strong>Failure while adding a season</strong>: ') }}",
+    };
+</script>
+<script src="{{ url_for('static', filename='jscss/admin/seasons/seasons.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% set navLeft=[
+("dashboard", _("Dashboard"), url_for("admin.dashboard"), "dashboard"),
+("seasons", _("Seasons"), url_for("admin.seasons"), "time"),
+("animes", _("Animes"), "/tags", "tag"),
+("tags", _("Tags"), "/tags", "tag"),
+("users", _("Users"), "/users", "user")
+] %}
+{% set navRight=[
+("login", "Login", "/login", "log-in"),
+("logout", "Logout", "/register", "user"),
+] %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %} | Cab Fansub Admin Interface</title>
+    <style>
+        body {
+           padding-top: 70px;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='libraries/roboto-fontface/css/roboto/roboto-fontface.css') }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='libraries/material-design-icons/iconfont/material-icons.css') }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='libraries/bootstrap/dist/css/bootstrap.min.css') }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/bootstrap-material-design.min.css') }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/css/ripples.min.css') }}"/>
+    {% block css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <img alt="Brand" src="{{ url_for('static', filename='logo/logo.png') }}"
+                     style="width:23px;display:inline-block;">
+                Cab Fansub Admin Interface
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                {% for navItem in navLeft %}
+                <li class="{% if navItem[0]==currPage %}active{% endif %}">
+                    <a href="{{navItem[2]}}">
+                        <span class="glyphicon glyphicon-{{navItem[3]}}"></span>
+                        {{navItem[1]}}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class='dropdown'>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span> {{g.user.username}}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/admin/users/my">
+                                <span class="glyphicon glyphicon-user"></span> My profile
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin.sign_out') }}">
+                                <span class="glyphicon glyphicon-log-out"></span> Sign out
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% block content %}{% endblock %}
+<script src="{{ url_for('static', filename='libraries/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/material.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/ripples.min.js') }}"></script>
+<script>
+    $.material.init();
+    var csrftoken = "{{ csrf_token() }}";
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        }
+    })
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>
