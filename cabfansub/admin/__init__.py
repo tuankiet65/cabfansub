@@ -1,8 +1,11 @@
 from flask import Blueprint, session, g, redirect, url_for, render_template
-from cabfansub.admin.authentication import urlMapping as authUrlMapping
+from cabfansub.database import User, LoginToken, InvalidToken, create_all_tables
+
+from cabfansub.admin.authentication import urlMapping as authUrlMapping, need_to_login
 from cabfansub.admin.ajax import urlMapping as ajaxUrlMapping
-from cabfansub.database import User, LoginToken, InvalidToken, Season
-from functools import wraps
+from cabfansub.admin.seasons import urlMapping as seasonsUrlMapping
+from cabfansub.admin.anime import urlMapping as animeUrlMapping
+
 admin = Blueprint("admin", __name__, url_prefix = "/admin")
 
 
@@ -18,39 +21,21 @@ def load_user_info():
             g.user = None
 
 
-def need_to_login(func):
-    @wraps(func)
-    def tmp_func():
-        if g.user is None:
-            return redirect(url_for("admin.login"))
-        return func
-
-    return tmp_func
-
 urlMapping = authUrlMapping
 urlMapping.extend(ajaxUrlMapping)
+urlMapping.extend(seasonsUrlMapping)
+urlMapping.extend(animeUrlMapping)
 for urlMap in urlMapping:
     admin.add_url_rule(urlMap[0], view_func = urlMap[2], methods = urlMap[1])
 
 
-@need_to_login
 @admin.route("/")
+@need_to_login
 def index():
     return redirect(url_for("admin.dashboard"))
 
-@need_to_login
+
 @admin.route("/dashboard")
+@need_to_login
 def dashboard():
     return render_template("admin/dashboard.html")
-
-
-@need_to_login
-@admin.route("/seasons")
-def seasons():
-    seasons = Season.select()
-    return render_template("admin/seasons.html", seasons = seasons)
-
-@need_to_login
-@admin.route("/season/<int:id>")
-def season_list_anime(id):
-    return render_template("admin/season_list_anime.html")

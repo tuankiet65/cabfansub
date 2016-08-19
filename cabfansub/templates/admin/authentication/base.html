@@ -19,7 +19,10 @@
 <script src="{{ url_for('static', filename='libraries/bootstrap-material-design/dist/js/ripples.min.js') }}"></script>
 <script>
     $.material.init();
+    var csrftoken = "{{ csrf_token() }}";
 </script>
+</script>
+<script src="{{ url_for('static', filename='jscss/admin/common.js') }}"></script>
 {% block js %}{% endblock %}
 </body>
 </html>

@@ -5,11 +5,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='libraries/animate.css/animate.min.css') }}" />
     <style>
         .container-fluid {
-        display:flex;justify-content:center;align-items:center;
+            display:flex;
+            justify-content:center;
+            align-items:center;
         }
         .well {
-            max-width: 600px;
+            max-width: 400px;
             width: 90%;
+            margin-top: 10vh;
+            background-color: rgba(255, 255, 255, 0.85) !important;
         }
         body {
             /* Background source: Pixiv ID 58476233 */
@@ -24,26 +28,65 @@
         <div id="login-form-header">
             <img src="/static/logo/logo.png"/>
         </div>
-        <form action="/admin/login" method="post">
+        <form action="#" method="post" onsubmit="submitLoginForm(); return false;">
             <div class="form-group">
-                <input placeholder="Your username" name="username" type="text" class="form-control">
+                <input placeholder="{{ _('Your username') }}" id="username" type="text" class="form-control" required>
             </div>
             <div class="form-group">
-                <input type="password" name="password" placeholder="Your password" class="form-control">
+                <input type="password" id="password" placeholder="{{ _('Your password') }}" class="form-control" required>
             </div>
             <div class="form-group">
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" name="remember-me">
-                        Remember me (for up to one month)
+                        <input type="checkbox" id="remember-me">
+                        {{ _("Remember me (for up to one month)") }}
                     </label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-block btn-primary btn-lg btn-raised">Log in</button>
-            <a href="/forgot" type="button" class="btn btn-block btn-lg btn-info btn-raised">
-                I forgot my password
+            <button type="submit" class="btn btn-block btn-primary btn-lg btn-raised" id="submit-button">{{ _("Log in") }}</button>
+            <a href="{{ url_for('admin.forgot_page') }}" type="button" class="btn btn-block btn-lg btn-info btn-raised">
+                {{ _("I forgot my password") }}
             </a>
         </form>
     </div>
 </div>
+{% endblock %}
+{% block js %}
+    <script src="{{ url_for('static', filename='libraries/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js') }}"></script>
+    <script>
+        i18n = {
+            signing: "{{ _("Signing in") }}",
+            login: "{{ _("Log in ") }}",
+            login_success: "{{ _("<strong>Sign in successful</string>. Redirecting to dashboard...") }}",
+            login_fail: "{{ _("<strong>Sign in unsuccessful</string>. Check your username and password.") }}"
+        };
+
+        var ajaxErrorCallback=function(){
+            $("#submit-button").prop("disabled", false);
+            $("#submit-button").html(i18n.login);
+        };
+        function submitLoginForm(){
+            $("#submit-button").prop("disabled", true);
+            $("#submit-button").html(i18n.signing);
+            postData = {
+                username: $("#username").val(),
+                password: $("#password").val(),
+                remember_me: false
+            };
+            if ($("#remember-me").prop("checked"))
+                postData.remember_me = true;
+            $.post("/admin/login", postData, function(recv){
+                if (recv.result == "success"){
+                    notifySuccess(i18n.login_success);
+                    setTimeout(function(){
+                        document.location="/admin/dashboard";
+                    }, 1000);
+                } else {
+                    notifyFailure(i18n.login_fail);
+                }
+                $("#submit-button").prop("disabled", false);
+                $("#submit-button").html(i18n.login);
+            })
+        }
+    </script>
 {% endblock %}

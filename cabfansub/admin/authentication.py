@@ -1,8 +1,19 @@
-from flask import render_template, request, redirect, session, json
+from flask import render_template, request, redirect, session, json, url_for, g
+from functools import wraps
 
 from cabfansub import async
 from cabfansub.common import timeSubtract, genRandomString
 from cabfansub.database import User, LoginToken, IncorrectPassword, ForgotToken, database, create_all_tables
+
+
+def need_to_login(func):
+    @wraps(func)
+    def tmp_func(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for("admin.login_page"))
+        return func(*args, **kwargs)
+
+    return tmp_func
 
 
 def login_page():
@@ -18,7 +29,7 @@ def login():
         return json.jsonify({"result": "failure"})
     try:
         session['tokenKey'], session['tokenValue'] = user.login(password)
-    except (User.DoesNotExist, LoginToken.DoesNotExists, IncorrectPassword):
+    except (User.DoesNotExist, LoginToken.DoesNotExist, IncorrectPassword):
         return json.jsonify({"result": "failure"})
     if 'remember-me' in request.form:
         session.permanent = True
@@ -27,7 +38,7 @@ def login():
 
 def sign_out():
     User.logout()
-    return redirect("admin.login")
+    return redirect(url_for("admin.login_page"))
 
 
 def register_page():
@@ -44,7 +55,7 @@ def register():
 
 
 def forgot_page():
-    return render_template("authentication/forgot.html")
+    return render_template("admin/authentication/forgot.html")
 
 
 def reset_password():
@@ -81,19 +92,13 @@ def reset_password2():
     return redirect("/login?resetSuccess")
 
 
-def burn():
-    create_all_tables()
-    return 'ok'
-
-
 urlMapping = [
     ("/login", ["GET"], login_page),
     ("/login", ["POST"], login),
-    ("/forgot", ["POST"], forgot_page),
+    ("/forgot", ["GET"], forgot_page),
     ("/forgot", ["POST"], reset_password),
     ("/forgot2", ["GET"], reset_password2),
     ("/signout", ["GET"], sign_out),
     ("/register", ["GET"], register_page),
     ("/register", ["POST"], register),
-    ("/burn", ["GET"], burn)
 ]

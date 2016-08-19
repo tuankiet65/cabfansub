@@ -1,9 +1,10 @@
 {% set navLeft=[
     ("index", _("This seasion"), "/", "home"),
-    ("older_seasons", _("Older seasions"), "/seasons", "time"),
+    ("older_seasons", _("Older seasons"), "/seasons", "time"),
     ("tags", _("Tags"), "/tags", "tag"),
     ("search", _("Search"), "/search", "search"),
-    ("about", _("About"), "/about", "info-sign")
+    ("about", _("About"), "/about", "info-sign"),
+    ("contact", _("Contact"), "/contact", "envelope")
 ] %}
 {% set navRight=[
     ("login", "Login", "/login", "log-in"),
@@ -40,7 +41,7 @@
             </button>
             <a class="navbar-brand" href="/">
                 <img alt="Brand" src="{{ url_for('static', filename='logo/logo.png') }}" style="width:23px;display:inline-block;">
-                Cab Fansub
+                <strong>Cab Fansub</strong>
             </a>
         </div>
         <div class="collapse navbar-collapse" id="navbar">

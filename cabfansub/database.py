@@ -3,16 +3,25 @@ import json
 from flask import session
 from peewee import *
 from playhouse.fields import PasswordField
-from playhouse.kv import JSONField as JF
 from flask_babel import gettext
-
 from cabfansub.config import Config
 from cabfansub.common import genRandomString, utcNow
 
 database = MySQLDatabase(host = Config.DB_HOST,
                          user = Config.DB_USER,
                          password = Config.DB_PASSWORD,
-                         database = Config.DB_NAME)
+                         database = Config.DB_NAME,
+                         fields = {"JSON": "varchar"})
+
+
+class JSONField(Field):
+    db_field = "longtext"
+
+    def db_value(self, value):
+        return json.dumps(value)
+
+    def python_value(self, value):
+        return json.loads(value)
 
 
 def create_all_tables():
@@ -78,14 +87,14 @@ class LoginToken(BaseModel):
 
 
 class ForgotToken(BaseModel):
-    token = CharField(primary_key=True, default=lambda: genRandomString(128), max_length=128)
-    timestamp = DateTimeField(default=utcNow())
-    user_id = ForeignKeyField(rel_model=User, to_field='id')
+    token = CharField(primary_key = True, default = lambda: genRandomString(128), max_length = 128)
+    timestamp = DateTimeField(default = utcNow())
+    user_id = ForeignKeyField(rel_model = User, to_field = 'id')
 
     @staticmethod
     def new(user_id):
         ForgotToken.delete().where(ForgotToken.user_id == user_id).execute()
-        token = ForgotToken.create(user_id=user_id)
+        token = ForgotToken.create(user_id = user_id)
         return token
 
 
@@ -98,9 +107,8 @@ class Season(BaseModel):
 class Anime(BaseModel):
     # auto id field
     anime_name = CharField()
-    art = CharField(default = "empty_art.png")
-    description = TextField()
-    metadata = JF()
+    season = ForeignKeyField(rel_model = Season, to_field = "id")
+    metadata = JSONField()
     # {
     #   type: TV / Bluray / OVA / OVN / ...
     #   episodes: number of episodes
@@ -111,19 +119,48 @@ class Anime(BaseModel):
 class Episode(BaseModel):
     # auto id field
     anime = ForeignKeyField(rel_model = Anime, to_field = "id")
-    episode = IntegerField()
-    broadcast_date = DateTimeField()
-    length = SmallIntegerField()
-    status = CharField()
-    link = JF()
+    episode_number = IntegerField()
+    metadata = JSONField()
+    # broadcast_date = DateTimeField()
+    # length = SmallIntegerField()
+    # status = CharField()
+    link = JSONField(default = {})
+    # {
+    #   "Magnet": <link>,
+    #   ...
+    # }
 
 
 class Tag(BaseModel):
     # auto id field
     tag_name = CharField()
-    description = CharField()
+    description = CharField(default = "")
 
 
 class AnimeTagMap(BaseModel):
     tag_id = ForeignKeyField(rel_model = Tag, to_field = "id")
     anime_id = ForeignKeyField(rel_model = Anime, to_field = "id")
+
+
+class Setting(BaseModel):
+    key = CharField(unique = True)
+    value = JSONField()
+
+    def __getitem__(self, key):
+        try:
+            entry = Setting.get(Setting.key == key)
+        except Setting.DoesNotExist:
+            raise KeyError
+        return entry.value
+
+    def __setitem__(self, key, value):
+        entry, _ = Setting.get_or_create(key = key)
+        entry.value = value
+        entry.save()
+
+    def __delitem__(self, key):
+        try:
+            entry = Setting.get(Setting.key == key)
+        except Setting.DoesNotExist:
+            raise KeyError
+        entry.delete_instance()

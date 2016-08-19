@@ -15,21 +15,10 @@ var rowTemplate = Handlebars.compile(" \
     </tr> \
 ");
 
-$(document).ajaxError(function(event, jqxhr, settings, thrownError){
-    console.log(event, jqxhr, settings);
-    $.notify({
-        message: i18n.add_fail+thrownError
-    },{
-        placement: {
-            from: "bottom"
-        },
-        type: "danger",
-        showProgressbar: true,
-        timer: 100
-    });
+var ajaxErrorCallback=function(){
     $("#add-season").html(i18n.button_caption);
     $("#add-season").prop("disabled", false);
-});
+};
 
 $("select").dropdown({ "autoinit" : ".select" });
 
@@ -42,31 +31,13 @@ $("#add-season").on("click", function(){
     };
     $.post("/admin/ajax/add_season", data, function(recv){
         if (recv.result == "success"){
-            $.notify({
-                message: i18n.add_success
-            },{
-                placement: {
-                    from: "bottom"
-                },
-                type: "success",
-                showProgressbar: true,
-                timer: 100
-            });
+            notifySuccess(i18n.add_success)
             rowID++;
             data.id=rowID;
             data.internalId=recv.internalId;
             $("tr:last").before(rowTemplate(data))
         } else {
-            $.notify({
-                message: i18n.add_fail+recv.result
-            },{
-                placement: {
-                    from: "bottom"
-                },
-                type: "danger",
-                showProgressbar: true,
-                timer: 100
-            })
+            notifyFailure(i18n.add_fail+recv.result.toString())
         }
         $("#add-season").html(i18n.button_caption);
         $("#add-season").prop("disabled", false);

@@ -1,0 +1,98 @@
+{% extends "admin/base.html" %}
+{% block title %}Seasons{% endblock %}
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='libraries/dropdown.js/jquery.dropdown.css') }}"/>
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='jscss/admin/seasons/seasons.css') }}"/>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="center">Season: {{season.season_name}}</h1>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Anime</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for anime_entry in anime %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><a href="#">{{anime_entry.anime_name}}</a></td>
+                <td>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">
+                    <a class="btn btn-primary btn-block btn-raised"
+                       data-toggle="modal"
+                       href="#add-modal">Add an anime to this season</a>
+                    <div class="modal fade" id="add-modal">
+                    	<div class="modal-dialog">
+                    		<div class="modal-content">
+                    			<div class="modal-header">
+                    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    				<h4 class="modal-title">Add a new anime to {{ season.season_name }}</h4>
+                    			</div>
+                    			<div class="modal-body">
+                                    <input type="number" placeholder="{{ _('MyAnimeList ID') }}" id="mal-id" class="form-control">
+                                    <button class="btn btn-primary btn-raised btn-block" id="import-button">{{ _('Import from Hummingbird.me') }}</button>
+                                    <button class="btn btn-primary btn-block">{{ _('Or add the anime manually by hand') }}</button>
+                    			</div>
+                    			<div class="modal-footer">
+                    				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    			</div>
+                    		</div><!-- /.modal-content -->
+                    	</div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ url_for('static', filename='libraries/dropdown.js/jquery.dropdown.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js') }}"></script>
+<script src="{{ url_for('static', filename='libraries/handlebars/handlebars.min.js') }}"></script>
+<script>
+    season_id = {{season.id}};
+    i18n = {
+        import_hummingbird: "{{ _('Import from Hummingbird.me') }}",
+        importing: "{{ _("Importing...") }}",
+        import_manual: "{{ _('Or add the anime manually from hand') }}",
+        import_success: "{{ _('Successfully imported the anime. Redirecting to the anime page...') }}",
+        import_fail: "{{ _('<strong>Failure while importing</strong>: ') }}",
+    };
+    var ajaxErrorCallback=function(){
+        $("#import-button").prop("disabled", false);
+        $("#import-button").html(i18n.import_hummingbird);
+    };
+    $("#import-button").on("click", function(){
+        $("#import-button").prop("disabled", true);
+        $("#import-button").html(i18n.importing);
+        postData = {
+            season_id: season_id,
+            mal_id: $("#mal-id").val()
+        };
+        $.post("{{url_for("admin.anime_import_hummingbird")}}", postData, function(recv){
+            if (recv.result == "success"){
+                notifySuccess(i18n.import_success);
+                setTimeout(function(){
+                    document.location = "/admin/anime/"+recv.anime_id.toString();
+                }, 1000);
+            } else {
+                notifyFailure(i18n.import_fail+recv.result);
+            };
+            $("#import-button").prop("disabled", false);
+            $("#import-button").html(i18n.import_hummingbird);
+        });
+    });
+</script>
+<script src="{{ url_for('static', filename='jscss/admin/seasons/seasons.js') }}"></script>
+{% endblock %}
